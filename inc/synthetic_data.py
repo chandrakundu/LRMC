@@ -33,14 +33,15 @@ class DataGenerator:
         omega.view(-1)[omega_id] = 1
         Y = omega.view(self.d1, self.d2) * Y
 
-        return X_orig, Y, omega.view(self.d1, self.d2)
+        return U,V, Y, omega.view(self.d1, self.d2)
     
 def get_sup_val(num_iter, n, r, alpha, p, device):
 
     max_value = torch.tensor(0,device=device)
     data = DataGenerator(n,n,r,alpha,p, device)
     for i in range(num_iter):
-        X_orig,_,_ = data.new()
+        U,V,_,_ = data.new()
+        X_orig = torch.mm(U, V.t())
         X_max = torch.max(X_orig)
         if X_max > max_value:
             max_value = X_max

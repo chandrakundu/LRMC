@@ -118,10 +118,10 @@ def save(net, fname_ext="", dirname='saved_models_lrpca'):
     result_zeta = np.zeros((net.max_iter,))
     result_eta = np.zeros((net.max_iter,))
     for i in range(net.max_iter):
-        result_zeta[i] 	= net.zeta[i].data.cpu().numpy()
-        result_eta[i] 	= net.eta[i].data.cpu().numpy()
+        result_zeta[i] 	= net.ths_v[i].data.cpu().numpy()
+        result_eta[i] 	= net.step[i].data.cpu().numpy()
 
-    spath = f'{dirname}/lrpca_n{net.d1}_r{net.r}_alpha{net.alpha}_{fname_ext}.mat'
+    spath = f'{dirname}/lrpca_n{net.d1}_r{net.r}_alpha{net.alpha}.mat'
     sio.savemat(spath, {'zeta':result_zeta, 'eta':result_eta})  
     print(f'Model saved to {spath}') 
             

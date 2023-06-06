@@ -41,7 +41,7 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
             
         total_loss = 0
         for epoch in range(nepoch_pre):
-            X_orig, Y, omega = data.new()
+            U, V, Y, omega = data.new()
 
             for i in range(net.max_iter):
                 optimizers[i].zero_grad()
@@ -51,7 +51,7 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
                 net.initalize_zeta(stage)
                 net.initalize_eta(stage)
 
-            loss = net(X_orig, Y, omega, stage+1)
+            loss = net(U, V, Y, omega, stage+1)
             total_loss += loss.item()
             loss.backward()
             optimizers[stage].step()
@@ -67,14 +67,14 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
             #     print(f'Pretrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
                 
 
-            del X_orig, Y, omega, loss
+            del U, V, Y, omega, loss
             gc.collect()
             torch.cuda.empty_cache()
         
         # print('----- parameter update -----')
         # print(f'zeta: {net.zeta[stage].data} and eta: {net.eta[stage].data}')
-        print(f'eta = {[net.eta[j].data.item() for j in range(stage+1)]}')
-        print(f'zeta = {[net.zeta[j].data.item() for j in range(stage+1)]}')
+        # print(f'eta = {[net.eta[j].data.item() for j in range(stage+1)]}')
+        # print(f'zeta = {[net.zeta[j].data.item() for j in range(stage+1)]}')
 
         if stage == 0:
             continue
@@ -82,13 +82,13 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
         print(f'Layer {stage} Full Training ========================')
         total_loss = 0
         for epoch in range(nepoch_full):
-            X_orig, Y, omega = data.new()
+            U, V, Y, omega = data.new()
 
             for i in range(net.max_iter):
                 optimizers[i].zero_grad()
 
             net.enable_layers(stage+1)
-            loss = net(X_orig, Y, omega, stage+1)
+            loss = net(U, V, Y, omega, stage+1)
             total_loss += loss.item()
             loss.backward()
 
@@ -98,7 +98,7 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
             if epoch % 100 == 0 and epoch > 0:
                 print(f'Fulltrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
 
-            del X_orig, Y, omega, loss
+            del U, V, Y, omega, loss
             gc.collect()
             torch.cuda.empty_cache()
 
@@ -106,15 +106,15 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
         # print etas and zetas in one line
         # print('----- parameter update -----')
         # print(f'zeta: {net.zeta[stage].data} and eta: {net.eta[stage].data}')
-        print(f'etas: {[net.eta[j].data.item() for j in range(stage+1)]}')
-        print(f'zetas: {[net.zeta[j].data.item() for j in range(stage+1)]}')
+        # print(f'etas: {[net.eta[j].data.item() for j in range(stage+1)]}')
+        # print(f'zetas: {[net.zeta[j].data.item() for j in range(stage+1)]}')
             
     end = time.time()
     print(f'Training time: {end-start}')
     return net
 
 
-def save(net, fname_ext="", dirname='saved_models'):
+def save(net, fname_ext="", dirname='saved_models_lrmc'):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
         print(f'Created directory {dirname}. Now saving model...')
@@ -124,7 +124,7 @@ def save(net, fname_ext="", dirname='saved_models'):
         result_zeta[i] 	= net.zeta[i].data.cpu().numpy()
         result_eta[i] 	= net.eta[i].data.cpu().numpy()
 
-    spath = f'{dirname}/lrmc_n{net.d1}_r{net.r}_p{net.p}_i{net.max_iter}_{fname_ext}.mat'
+    spath = f'{dirname}/lrmc_n{net.d1}_r{net.r}_a{net.alpha}_p{net.p}_i{net.max_iter}.mat'
     sio.savemat(spath, {'zeta':result_zeta, 'eta':result_eta})  
     print(f'Model saved to {spath}') 
             
