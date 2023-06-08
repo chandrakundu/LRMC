@@ -111,7 +111,7 @@ def train(net, data, nepoch_pre, nepoch_full, lr_init, lr_frac_zeta=5000.0, lr_f
     return net
 
 
-def save(net, fname_ext="", dirname='saved_models_lrpca'):
+def save(net, fname_ext="", dirname='saved_models_lrpca2'):
     if not os.path.exists(dirname):
         os.makedirs(dirname)
         print(f'Created directory {dirname}. Now saving model...')

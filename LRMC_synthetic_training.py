@@ -49,19 +49,34 @@ if __name__ == "__main__":
     # ns = [1500, 2500, 3500, 4500]
 
     # ps = [0.2, 0.1, 0.07, 0.055, 0.045]
-    n = 4000
-    p = 0.08
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+    # ns = [3000, 10000]
+    # ps = [0.0867, 0.0299]
+
+    ns = [4000, 9000]
+    ps = [0.0674, 0.0329]
+
+    # ns = [8000, 5000]
+    # ps = [0.0365, 0.0554]
+
+    # ns = [7000, 6000]
+    # ps = [0.0411, 0.0471]
+
+    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 
     r = 5
-    alphas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3] 
+    # alphas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3] 
+    alpha = 0.1
     max_iter = 32
 
     lr_frac_zeta = 1000
     lr_frac_eta = 1000
 
-    for alpha in alphas:
-        net = main(n, n, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device)
+    for n in ns:
+        for p in ps:
+            net = main(n, n, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device)
+
+    
 
 
 
