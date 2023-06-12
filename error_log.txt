@@ -1,0 +1,8 @@
+
+n: 8500, p: 0.0346, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+n: 9000, p: 0.0329, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+n: 9500, p: 0.0313, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+n: 10000, p: 0.0299, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+n: 9500, p: 0.0313, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+n: 10000, p: 0.0299, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+n: 8000, p: 0.0365, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000

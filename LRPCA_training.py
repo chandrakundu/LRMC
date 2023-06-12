@@ -30,14 +30,25 @@ def main(d1, d2, r, alpha, max_iter, device):
 
     return net
 
+def run_main(n,r,alpha,max_iter,device):
+    try:
+        net = main(n, n, r, alpha, max_iter, device)
+    except:
+        with open('error_log.txt', 'a') as f:
+            f.write(f'LRPCA: n: {n}, alpha: {alpha}, max_iter: {max_iter}\n')
+        run_main(n,r,alpha,max_iter-2,device)
+
+
+        
+
 
 if __name__ == "__main__":
     # ns = [2000, 3000, 4000, 5000] 
-    # ns = [1500, 2500, 3500, 4500]
+    ns = [1500, 2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500]
     # ns = [10000,3000]
     # ps = [0.0299, 0.0867]
 
-    ns = [9000, 4000]
+    # ns = [9000, 4000]
     # ps = [0.0329, 0.0674]
 
     # ns = [8000, 5000]
@@ -47,15 +58,19 @@ if __name__ == "__main__":
     # ps = [0.0411, 0.0471]
 
 
-    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     r = 5
-    alpha = 0.1
+    # alpha = 0.1
     max_iter = 16
 
     for n in ns:
-        net = main(n, n, r, alpha, max_iter, device)
-
+        if n == 4000 or n == 3000:
+            alphas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35,0.4,0.45,0.5]
+        else:
+            alphas = [0.1]
+        for alpha in alphas:
+            run_main(n,r,alpha,max_iter,device)
     
 
 
