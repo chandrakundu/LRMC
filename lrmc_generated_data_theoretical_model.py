@@ -6,6 +6,8 @@ import os
 import sys
 import time
 import scipy.io as sio
+import torch.nn.functional as F
+import torch.nn as nn
 
 datatype = torch.float32
 
@@ -35,8 +37,9 @@ def generate_problem(r,d1,d2,alpha, p, device):
 
     return X_orig, Y, omega.view(d1,d2)
 
-def lrmc(X_orig, Y, r, omega, zeta, eta, max_iter, device):
+def lrmc(U,V, Y, r, omega, zeta, eta, max_iter, device):
     # preparation 
+    X_orig = torch.mm(U,V.t())
     errors = []
     times = []
     thres_up = 1e3
@@ -78,7 +81,58 @@ def lrmc(X_orig, Y, r, omega, zeta, eta, max_iter, device):
 
     return torch.tensor(errors), torch.tensor(times)
 
+
+floss = nn.MSELoss()
+def lrmc_us(Lfista, Sfista, Y, r, omega, zeta, eta, max_iter, device):
+    """
+    LRMC for ultrasound data
+    """
+    # preparation 
+    losses = []
+    times = []
+    thres_up = 1e3
+    thres_low = 1e-8
+
+    start_time = time.time()
     
+    S0 = Y - soft_thres(Y, zeta[0], device)*eta[0]
+    
+    U0, Sigma0, V0 = torch.svd_lowrank(S0,r,niter=4)
+    Sigma_Sqrt = torch.diag(torch.sqrt(Sigma0))
+    L = torch.mm(U0,Sigma_Sqrt)
+    R = torch.mm(V0, Sigma_Sqrt)
+    timer = time.time() - start_time
+
+    X = torch.mm(L,R.t())
+    loss = 0.5*floss(X,Lfista)+0.5*floss(Sfista,S0)
+
+    losses.append(loss)
+    times.append(timer)
+    print("Iteration: {}, Error: {}, Time: {}".format(0, loss, timer))
+
+    for i in range(1, max_iter):
+        start_time = time.time()
+        diff = Y - omega*torch.mm(L,R.t())
+        midterm = (soft_thres(diff, zeta[i], device) - diff)*eta[i]
+        RRinv = torch.inverse(torch.mm(R.t(),R))
+        LLinv = torch.inverse(torch.mm(L.t(),L))
+
+        Lk = L - torch.mm(torch.mm(midterm, R), RRinv)
+        Rk = R - torch.mm(torch.mm(midterm.t(), L), LLinv)
+        L = Lk
+        R = Rk
+        timer += time.time() - start_time
+        X = torch.mm(L,R.t())
+        loss = 0.5*floss(X,Lfista)+0.5*floss(Sfista,S0)
+
+        losses.append(loss)
+        times.append(timer)
+        print("Iteration: {}, Error: {}, Time: {}".format(i, loss, timer))
+        if loss < thres_low or loss > thres_up:
+            break
+
+    return torch.tensor(losses), torch.tensor(times)
+   
 
 # def soft_thres(inputs, threshold, device):
 # 		out = torch.sign(inputs) * torch.max( torch.abs(inputs) - threshold, torch.zeros([1, 1], device=device) )

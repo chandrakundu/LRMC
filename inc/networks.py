@@ -61,6 +61,11 @@ class LRMCNet(nn.Module):
         
         if en_l > 8:
             self.eta[en_l].data = torch.tensor(1.0/self.p, dtype=datatype, device = self.device)
+
+        # this elif is for the case of recoveribility when alpha is big
+        elif en_l > 20:
+            eta_add = 1 + torch.sqrt(1/(200-en_l))
+            self.eta[en_l].data = en_l + eta_add
         else:
             eta_add = torch.clone((1/self.p-1)*(self.eta[0]/7))
             self.eta[en_l].data = torch.clone(self.eta[en_l-1].data + eta_add)

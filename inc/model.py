@@ -9,6 +9,7 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
     
 
     optimizers = []
+    tols = 10e-6 # tolerance for early iteration termination
     # default lr frac for synthetic data is 10000.0
     # default lr frac is same for zeta and eta
     
@@ -18,14 +19,24 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
         optimizers.append(optimizer)
 
     start = time.time()
-    for stage in range(net.max_iter):
-        nepoch_pre = nepoch1
-        nepoch_full = nepoch2
+    for stage in range(net.max_iter):        
         
-        print(f'Layer {stage} Pre-training ========================')
-        
+        print(f'Layer {stage} Pre-training ========================')      
+
         if stage>16:
-            nepoch_full = nepoch2//2
+            nepoch_full = int(nepoch2/1.5)
+            nepoch_pre = int(nepoch1/2)
+        elif stage>32:
+            nepoch_full = int(nepoch2/3)
+            nepoch_pre = int(nepoch1/3)
+        elif stage>64:
+            nepoch_full = int(nepoch2/8)
+            nepoch_pre = int(nepoch1/3)
+        else:
+            nepoch_full = int(nepoch2)
+            nepoch_pre = int(nepoch1)
+
+        
 
         if (stage>0):
             optimizers[stage].param_groups[0]['lr'] = net.zeta[stage-1].data * lr_init /lr_frac_zeta
@@ -53,6 +64,11 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
 
             loss = net(U, V, Y, omega, stage+1)
             total_loss += loss.item()
+            if total_loss < tols:
+                del U, V, Y, omega, loss
+                gc.collect()
+                torch.cuda.empty_cache()
+                break
             loss.backward()
             optimizers[stage].step()
 
@@ -62,6 +78,10 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
 
             if epoch % 100 == 0 and epoch > 0:
                 print(f'Pretrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
+
+            if nepoch_pre < 101 and epoch % 10 == 0:
+                print(f'Pretrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
+                
 
             # if epoch % 10 == 0:
             #     print(f'Pretrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
@@ -88,14 +108,23 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
                 optimizers[i].zero_grad()
 
             net.enable_layers(stage+1)
-            loss = net(U, V, Y, omega, stage+1)
+            loss = net(U, V, Y, omega, stage+1)  
             total_loss += loss.item()
+            if total_loss < tols:
+                del U, V, Y, omega, loss
+                gc.collect()
+                torch.cuda.empty_cache()
+                break
+
             loss.backward()
 
             for i in range(stage+1):
                 optimizers[i].step()
 
             if epoch % 100 == 0 and epoch > 0:
+                print(f'Fulltrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
+
+            if nepoch_full < 101 and epoch % 10 == 0:
                 print(f'Fulltrain: Layer {stage} Epoch {epoch}: Loss {loss.item()} average loss: {total_loss/(epoch+1)}')
 
             del U, V, Y, omega, loss
@@ -114,7 +143,7 @@ def train(net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_et
     return net
 
 
-def save(net, fname_ext="", dirname='saved_models_lrmc3'):
+def save(net, fname_ext="", dirname='saved_models_lrmc3/recoveribility'):
     if fname_ext != "":
         dirname = f'{dirname}/{fname_ext}'
     if not os.path.exists(dirname):
@@ -126,7 +155,7 @@ def save(net, fname_ext="", dirname='saved_models_lrmc3'):
         result_zeta[i] 	= net.zeta[i].data.cpu().numpy()
         result_eta[i] 	= net.eta[i].data.cpu().numpy()
 
-    spath = f'{dirname}/lrmc_n{net.d1}_r{net.r}_a{net.alpha}_p{net.p}_i{net.max_iter}.mat'
+    spath = f'{dirname}/lrmc_n{net.d1}_r{net.r}_a{net.alpha}_p{net.p}.mat'
     sio.savemat(spath, {'zeta':result_zeta, 'eta':result_eta})  
     print(f'Model saved to {spath}') 
             
