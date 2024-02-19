@@ -1,3 +1,51 @@
 LRMC: n: 3000, p: 0.1, alpha: 0.55, lr_frac_zeta: 100, lr_frac_eta: 10000
 Error: CUDA out of memory. Tried to allocate 36.00 MiB (GPU 0; 23.65 GiB total capacity; 5.77 GiB already allocated; 10.69 MiB free; 6.04 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
 -----------------------------------
+LRMC: n: 4000, p: 0.0867, alpha: 0, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 2000, p: 0.0867, alpha: 0.2, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 2000, p: 0.0867, alpha: 0.3, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 4000, p: 0.0867, alpha: 0.15, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 2000, p: 0.1, alpha: 0.3, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 2000, p: 0.15, alpha: 0.1, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 2000, p: 0.15, alpha: 0.2, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 2000, p: 0.15, alpha: 0.3, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 4000, p: 0.1, alpha: 0.2, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.0867, alpha: 0.25, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.0867, alpha: 0.2, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.2, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.2, alpha: 0.25, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.2, alpha: 0.3, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------
+LRMC: n: 3000, p: 0.25, alpha: 0.3, lr_frac_zeta: 100, lr_frac_eta: 100
+Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
+-----------------------------------

@@ -1,6 +1,7 @@
 import torch
 import matplotlib.pyplot as plt
 import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
 from inc.model import train, save
 from inc.networks import LRMCNet
@@ -10,11 +11,10 @@ from inc.synthetic_data import DataGenerator
 from lrmc_generated_data_theoretical_model import generate_problem, lrmc
 
 
-
-def main(d1, d2, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device): 
-    n=d1   
-    zeta_init = 17/n
-    eta_init = 0.55       
+def main(d1, d2, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device):
+    n = d1
+    zeta_init = 17 / n
+    eta_init = 0.55
 
     net = LRMCNet(d1, d2, r, alpha, p, max_iter, zeta_init, eta_init, device)
     data = DataGenerator(net.d1, net.d2, net.r, net.alpha, net.p, net.device)
@@ -24,11 +24,13 @@ def main(d1, d2, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device):
     lr_init = 1
 
     # print all the parameters
-    print(f'device: {device},n: {n}, r: {r}, alpha: {alpha}, p: {p}, max_iter: {max_iter}, zeta_init: {zeta_init}, eta_init: {eta_init}, nepoch_pre: {nepoch_pre}, nepoch: {nepoch}, lr_init: {lr_init}' )
+    print(
+        f"device: {device},n: {n}, r: {r}, alpha: {alpha}, p: {p}, max_iter: {max_iter}, zeta_init: {zeta_init}, eta_init: {eta_init}, nepoch_pre: {nepoch_pre}, nepoch: {nepoch}, lr_init: {lr_init}"
+    )
     # print(f'lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}, device: {device}' )
 
     net = train(net, data, nepoch_pre, nepoch, lr_init, lr_frac_zeta, lr_frac_eta)
-    ext = f'n3000_p0.1_nepoch101_lrzeta{lr_frac_zeta}_lreta{lr_frac_eta}'
+    ext = f"n3000_p0.1_nepoch101_lrzeta{lr_frac_zeta}_lreta{lr_frac_eta}"
     save(net, ext)
 
     U, V, Y, omega = data.new()
@@ -36,24 +38,27 @@ def main(d1, d2, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device):
     try:
         with torch.no_grad():
             errors, times = lrmc(U, V, Y, r, omega, net.zeta, net.eta, max_iter, device)
-        dirname = f'output_lrmc/{ext}'
+        dirname = f"output_lrmc/{ext}"
         if not os.path.exists(dirname):
             os.makedirs(dirname)
-            print(f'Created directory {dirname}. Now saving model...')
+            print(f"Created directory {dirname}. Now saving model...")
         plt.figure()
-        plt.semilogy(times.detach().numpy(), errors.detach().numpy(), 'o-')
-        plt.savefig(f'{dirname}/lrmc_n{n}_r{r}_alpha{alpha}_p{p}_lrzeta{lr_frac_zeta}_lreta{lr_frac_eta}_new.png')
-        plt.close() 
+        plt.semilogy(times.detach().numpy(), errors.detach().numpy(), "o-")
+        plt.savefig(
+            f"{dirname}/lrmc_n{n}_r{r}_alpha{alpha}_p{p}_lrzeta{lr_frac_zeta}_lreta{lr_frac_eta}_new.png"
+        )
+        plt.close()
     except Exception as e:
-        with open('error_log.txt', 'a') as f:
-            f.write(f'LRMC Plot Error: n: {n}, p: {p}, alpha: {alpha}, lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}\n')
-            f.write(f'Error: {e}\n')
-            f.write('-----------------------------------\n')
+        with open("error_log.txt", "a") as f:
+            f.write(
+                f"LRMC Plot Error: n: {n}, p: {p}, alpha: {alpha}, lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}\n"
+            )
+            f.write(f"Error: {e}\n")
+            f.write("-----------------------------------\n")
     del net
     del U, V, Y, omega
     torch.cuda.empty_cache()
 
-    
 
 # def run_main(n,r,alpha,p,max_iter,device,lr_frac_zeta,lr_frac_eta):
 #     try:
@@ -65,7 +70,7 @@ def main(d1, d2, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device):
 
 
 if __name__ == "__main__":
-    # ns = [1000, 2000, 3000, 4000, 5000] 
+    # ns = [1000, 2000, 3000, 4000, 5000]
     # ns = [1500, 2500, 3500, 4500]
 
     # ps = [0.2, 0.1, 0.07, 0.055, 0.045]
@@ -91,7 +96,7 @@ if __name__ == "__main__":
     # ps = [0.0674, 0.0471, 0.0365]
 
     # ns = [3000, 4000, 5000, 6000, 7000, 8000]
-    # ps = [0.0867, 0.0674, 0.0554, 0.0471, 0.0411, 0.0365]    
+    # ps = [0.0867, 0.0674, 0.0554, 0.0471, 0.0411, 0.0365]
 
     # ns = [3500, 4500, 5500, 6500, 7500]
     # ps = [0.0758, 0.0608, 0.0509, 0.0439, 0.0387]
@@ -110,26 +115,28 @@ if __name__ == "__main__":
 
     # params = dict(zip(ns, ps))
 
-    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
 
     r = 5
-    alphas = [0.6]
-    
+    alphas = [0.05]
+
     max_iter = 180
 
     lr_frac_zetas = [10000]
     lr_frac_etas = [10000]
 
     for lr_frac_zeta in lr_frac_zetas:
-        for lr_frac_eta in lr_frac_etas: 
+        for lr_frac_eta in lr_frac_etas:
             for alpha in alphas:
                 try:
                     main(n, n, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device)
                 except Exception as e:
-                    with open('error_log.txt', 'a') as f:
-                        f.write(f'LRMC: n: {n}, p: {p}, alpha: {alpha}, lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}\n')
-                        f.write(f'Error: {e}\n')
-                        f.write('-----------------------------------\n')
+                    with open("error_log.txt", "a") as f:
+                        f.write(
+                            f"LRMC: n: {n}, p: {p}, alpha: {alpha}, lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}\n"
+                        )
+                        f.write(f"Error: {e}\n")
+                        f.write("-----------------------------------\n")
                     continue
                 # if alpha > 0.3 and alpha <= 0.4:
                 #     max_iter = 40
@@ -145,7 +152,6 @@ if __name__ == "__main__":
                 #     with open('error_log.txt', 'a') as f:
                 #         f.write(f'LRMC: n: {n}, p: {p}, alpha: {alpha}, lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}\n')
                 #     continue
-                    
 
             # for n, p in params.items():
             #     if n == 3000:
@@ -154,14 +160,12 @@ if __name__ == "__main__":
             #         alphas = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35,0.4,0.45,0.5, 0.55, 0.6]
             #     else:
             #         alphas = [0.1]
-                
-               
 
             #     if n > 9500:
-            #         max_iter = 16                    
+            #         max_iter = 16
             #     elif n > 4000:
             #         max_iter = 32
-            #     else:   
+            #     else:
             #         max_iter = 64
 
             #     for alpha in alphas:
@@ -172,18 +176,9 @@ if __name__ == "__main__":
             #                 f.write(f'LRMC: n: {n}, p: {p}, alpha: {alpha}, lr_frac_zeta: {lr_frac_zeta}, lr_frac_eta: {lr_frac_eta}\n')
             #             continue
 
-
-    
-
-
-
     # for n in ns:
     #     net = main(n, n, r, alpha, p, max_iter, lr_frac_zeta, lr_frac_eta, device)
 
-    
-
-    
-    
     # params1 = {
     #     'n': 10000,
     #     'p': 0.02,
@@ -212,7 +207,3 @@ if __name__ == "__main__":
     # plt.figure()
     # plt.semilogy(times.detach().numpy(), errors.detach().numpy(), 'o-')
     # plt.savefig(f'output/lrmc_n{n}_r{r}_alpha{alpha}_p{p}_i{max_iter}.png')
-   
-
-
-    
