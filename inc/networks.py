@@ -11,7 +11,7 @@ class LRMCNet(nn.Module):
         self.zeta = [
             nn.Parameter(
                 Variable(
-                    torch.tensor(zeta0, dtype=datatype, device=device),
+                    torch.tensor(zeta0[t], dtype=datatype, device=device),
                     requires_grad=True,
                 )
             )
@@ -20,7 +20,7 @@ class LRMCNet(nn.Module):
         self.eta = [
             nn.Parameter(
                 Variable(
-                    torch.tensor(eta0, dtype=datatype, device=device),
+                    torch.tensor(eta0[t], dtype=datatype, device=device),
                     requires_grad=True,
                 )
             )
@@ -47,7 +47,7 @@ class LRMCNet(nn.Module):
         return nn.functional.relu(x - lambd) - nn.functional.relu(-x - lambd)
 
     def forward(self, U, V, Y, omega, num_l):
-        S0 = Y - self.soft_thres(Y, self.zeta[0]) / self.p
+        S0 = (Y - self.soft_thres(Y, self.zeta[0])) * self.eta[0]
         U0, Sigma0, V0 = torch.svd_lowrank(S0, self.r, niter=4)
         Sigma_Sqrt = torch.diag(torch.sqrt(Sigma0))
         L = torch.mm(U0, Sigma_Sqrt)
@@ -70,13 +70,18 @@ class LRMCNet(nn.Module):
         return loss
 
     def initalize_zeta(self, en_l):
-        self.zeta[en_l].data = torch.clone(self.zeta[en_l - 1].data * 0.66)
+        self.zeta[en_l].data = torch.clone(self.zeta[en_l - 1].data * 0.6)
 
     def initalize_eta(self, en_l):
         # self.eta[en_l].data = torch.clone(self.eta[en_l-1].data)
         # self.eta[en_l].data = torch.tensor(1.0/self.p, dtype=datatype, device = self.device)
 
-        if en_l > 8:
+        if en_l > 0 and en_l <= 1:
+            # set equla 1.3
+            self.eta[en_l].data = torch.tensor(1.3, dtype=datatype, device=self.device)
+        elif en_l > 1 and en_l <= 10:
+            self.eta[en_l].data = torch.clone(self.eta[en_l - 1].data * 1.3)
+        elif en_l > 10:
             self.eta[en_l].data = torch.tensor(
                 1.0 / self.p, dtype=datatype, device=self.device
             )

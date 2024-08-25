@@ -45,7 +45,7 @@ class LRMCNet(nn.Module):
         return nn.functional.relu(x - lambd) - nn.functional.relu(-x - lambd)
 
     def forward(self, X_orig, Y, omega, num_l):
-        S0 = Y - self.soft_thres(Y, self.zeta[0]) * self.eta[0]
+        S0 = (Y - self.soft_thres(Y, self.zeta[0])) * self.eta[0]
         U0, Sigma0, V0 = torch.svd_lowrank(S0, self.r, niter=4)
         Sigma_Sqrt = torch.diag(torch.sqrt(Sigma0))
         L = torch.mm(U0, Sigma_Sqrt)

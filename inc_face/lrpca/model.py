@@ -6,16 +6,14 @@ import numpy as np
 import gc
 
 
-def train_lrpca(
-    net, data, nepoch_pre, nepoch_full, lr_init, lr_frac_zeta=5000.0, lr_frac_eta=10.0
-):
+def train_lrpca(net, data, nepoch_pre, nepoch_full, lr_eta, lr_zeta):
     optimizers = []
     # default lr frac for synthetic data is 10000.0
     # default lr frac is same for zeta and eta
 
     for t in range(net.max_iter):
-        optimizer = torch.optim.SGD({net.ths_v[t]}, lr=lr_init / lr_frac_zeta)
-        optimizer.add_param_group({"params": net.step[t], "lr": lr_init / lr_frac_eta})
+        optimizer = torch.optim.SGD({net.ths_v[t]}, lr=lr_zeta)
+        optimizer.add_param_group({"params": net.step[t], "lr": lr_eta})
         optimizers.append(optimizer)
 
     start = time.time()
@@ -24,7 +22,7 @@ def train_lrpca(
 
         if stage > 0:
             optimizers[stage].param_groups[0]["lr"] = (
-                net.ths_v[stage - 1].data * lr_init / lr_frac_zeta
+                net.ths_v[stage - 1].data * lr_zeta
             )
 
         # if stage>5:
@@ -112,7 +110,7 @@ def train_lrpca(
     return net
 
 
-def save_lrpca(net, fname_ext="", dirname="saved_models_face/lrpcajan24"):
+def save_lrpca(net, fname_ext="", dirname="output/face_modeling/lrpca/july24"):
     if fname_ext != "":
         dirname = f"{dirname}/{fname_ext}"
     if not os.path.exists(dirname):

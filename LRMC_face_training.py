@@ -17,13 +17,13 @@ def main(r, p, max_iter, device):
     net = LRMCNet(r, p, max_iter, zeta0, eta0, device)
     nepoch_pre = 301
     nepoch = 301
-    lr_inits = [1, 10, 100, 1000]
+    lr_inits = [10]
     lr_frac_zeta = 10000.0
     lr_frac_eta = 10000.0
 
     for lr_init in lr_inits:
         net = train(net, data, nepoch_pre, nepoch, lr_init, lr_frac_zeta, lr_frac_eta)
-        save(net, "ext_lr_init2_" + str(lr_init))
+        save(net, fname_ext=f"_lr_{lr_init}")
 
 
 def main_lrpca(r, max_iter, device):
@@ -46,13 +46,13 @@ def main_lrpca(r, max_iter, device):
 
 
 if __name__ == "__main__":
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    p = 0.5
-    r = 2
+    device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+    # p = 0.5
+    # r = 2
 
-    max_iter = 10
+    max_iter = 20
 
-    ps = [0.3]
+    ps = [0.3, 0.4, 0.5]
     rs = [1]
 
     for p in ps:

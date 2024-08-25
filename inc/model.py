@@ -6,17 +6,15 @@ import numpy as np
 import gc
 
 
-def train(
-    net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_eta=10000.0
-):
+def train(net, data, nepoch1, nepoch2, lr_zeta, lr_eta):
     optimizers = []
     tols = 10e-6  # tolerance for early iteration termination
     # default lr frac for synthetic data is 10000.0
     # default lr frac is same for zeta and eta
 
     for t in range(net.max_iter):
-        optimizer = torch.optim.SGD({net.zeta[t]}, lr=lr_init / lr_frac_zeta)
-        optimizer.add_param_group({"params": net.eta[t], "lr": lr_init / lr_frac_eta})
+        optimizer = torch.optim.SGD({net.zeta[t]}, lr=lr_zeta)
+        optimizer.add_param_group({"params": net.eta[t], "lr": lr_eta})
         optimizers.append(optimizer)
 
     start = time.time()
@@ -37,9 +35,7 @@ def train(
             nepoch_pre = int(nepoch1)
 
         if stage > 0:
-            optimizers[stage].param_groups[0]["lr"] = (
-                net.zeta[stage - 1].data * lr_init / lr_frac_zeta
-            )
+            optimizers[stage].param_groups[0]["lr"] = net.zeta[stage - 1].data * lr_zeta
 
         # if stage>5:
         #     nepoch_full = 501
@@ -58,9 +54,9 @@ def train(
                 optimizers[i].zero_grad()
 
             net.enable_single_layer(stage)
-            if stage > 0:
-                net.initalize_zeta(stage)
-                net.initalize_eta(stage)
+            # if stage > 0:
+            #     net.initalize_zeta(stage)
+            #     net.initalize_eta(stage)
 
             loss = net(U, V, Y, omega, stage + 1)
             total_loss += loss.item()
@@ -149,8 +145,8 @@ def train(
 
 
 def save(net, fname_ext="", dirname="saved_model_lrmc_dec23"):
-    if fname_ext != "":
-        dirname = f"{dirname}/{fname_ext}"
+    # if fname_ext != "":
+    #     dirname = f"{dirname}/{fname_ext}"
     if not os.path.exists(dirname):
         os.makedirs(dirname)
         print(f"Created directory {dirname}. Now saving model...")
@@ -160,6 +156,6 @@ def save(net, fname_ext="", dirname="saved_model_lrmc_dec23"):
         result_zeta[i] = net.zeta[i].data.cpu().numpy()
         result_eta[i] = net.eta[i].data.cpu().numpy()
 
-    spath = f"{dirname}/lrmc_n{net.d1}_r{net.r}_a{net.alpha}_p{net.p}.mat"
+    spath = f"{dirname}/lrmc_n{net.d1}_r{net.r}_a{net.alpha}_p{net.p}_{fname_ext}.mat"
     sio.savemat(spath, {"zeta": result_zeta, "eta": result_eta})
     print(f"Model saved to {spath}")

@@ -49,3 +49,48 @@ Error: linalg.svd: The algorithm failed to converge because the input matrix is 
 LRMC: n: 3000, p: 0.25, alpha: 0.3, lr_frac_zeta: 100, lr_frac_eta: 100
 Error: linalg.svd: The algorithm failed to converge because the input matrix is ill-conditioned or has too many repeated singular values (error code: 4).
 -----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 50000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 50000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 50000, lr_frac_eta: 50000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 50000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 50000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.25, lr_frac_zeta: 10000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.25, lr_frac_zeta: 10000, lr_frac_eta: 50000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 50000, lr_frac_eta: 50000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.25, lr_frac_zeta: 50000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.25, lr_frac_zeta: 50000, lr_frac_eta: 50000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 3000, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------
+LRMC: n: 100, p: 0.1, alpha: 0.1, lr_frac_zeta: 10000, lr_frac_eta: 10000
+Error: Variable data has to be a tensor, but got float
+-----------------------------------

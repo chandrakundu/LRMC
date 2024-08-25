@@ -57,11 +57,34 @@ def get_sup_val(num_iter, n, r, alpha, p, device):
 
 
 if __name__ == "__main__":
-    get_sup_val(
-        5000,
-        5000,
+    # get_sup_val(
+    #     5000,
+    #     5000,
+    #     5,
+    #     0,
+    #     0.2,
+    #     torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
+    # )
+
+    data_gen = DataGenerator(
+        3000,
+        3000,
         5,
-        0,
-        0.2,
+        0.1,
+        0.1,
         torch.device("cuda:0" if torch.cuda.is_available() else "cpu"),
+    )
+
+    U, V, Y, omega = data_gen.new()
+
+    from scipy.io import savemat
+
+    savemat(
+        "obs1.mat",
+        {
+            "U": U.cpu().numpy(),
+            "V": V.cpu().numpy(),
+            "Y": Y.cpu().numpy(),
+            "omega": omega.cpu().numpy(),
+        },
     )
