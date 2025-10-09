@@ -11,7 +11,7 @@ class LRMCNet(nn.Module):
         self.zeta = [
             nn.Parameter(
                 Variable(
-                    torch.tensor(zeta0, dtype=datatype, device=device),
+                    torch.tensor(zeta0[t], dtype=datatype, device=device),
                     requires_grad=True,
                 )
             )
@@ -20,13 +20,13 @@ class LRMCNet(nn.Module):
         self.eta = [
             nn.Parameter(
                 Variable(
-                    torch.tensor(eta0, dtype=datatype, device=device),
+                    torch.tensor(eta0[t], dtype=datatype, device=device),
                     requires_grad=True,
                 )
             )
             for t in range(max_iter)
         ]
-        self.eta[0].requires_grad = False
+        # self.eta[0].requires_grad = False
         self.zeta_backup = [
             torch.tensor(0.0, dtype=datatype, device=device) for t in range(max_iter)
         ]

@@ -96,13 +96,13 @@ def main(
 def cli(device, alpha, p, eta_mult, zeta_mult, max_iter):
     n = 3000
     r = 5
-    dirname = "output/lrmc/july24/different_p"
+    dirname = "output/lrmc/sept24/runtime/lr0001"
     eta_inits = np.repeat(1 / p, max_iter)
     eta_inits[1:9] = np.linspace(1, 1 / p, 8) * eta_mult
     zeta_inits = [(17 / n) * (zeta_mult) ** i for i in range(max_iter)]
 
-    lr_etas = [0.001]
-    lr_zetas = [0.001]
+    lr_etas = [0.0001]
+    lr_zetas = [0.0001]
 
     lrs = zip(lr_zetas, lr_etas)
 

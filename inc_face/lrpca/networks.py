@@ -69,7 +69,7 @@ class LRPCANet(nn.Module):
 
     def InitializeThs(self, en_l):
         self.ths_v[en_l].data = torch.clone(self.ths_v[en_l - 1].data * 0.9)
-        self.step[en_l].data = torch.clone(self.step[en_l - 1].data * 0.5)
+        # self.step[en_l].data = torch.clone(self.step[en_l - 1].data * 0.5)
 
     def CheckNegative(self):
         isNegative = False

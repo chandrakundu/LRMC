@@ -9,8 +9,7 @@ import gc
 def train(net, data, nepoch1, nepoch2, lr_zeta, lr_eta):
     optimizers = []
     tols = 10e-6  # tolerance for early iteration termination
-    # default lr frac for synthetic data is 10000.0
-    # default lr frac is same for zeta and eta
+  
 
     for t in range(net.max_iter):
         optimizer = torch.optim.SGD({net.zeta[t]}, lr=lr_zeta)

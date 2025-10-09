@@ -6,17 +6,13 @@ import numpy as np
 import gc
 
 
-def train(
-    net, data, nepoch1, nepoch2, lr_init, lr_frac_zeta=10000.0, lr_frac_eta=10000.0
-):
+def train_lrmc(net, data, nepoch1, nepoch2, lr_zeta, lr_eta):
     optimizers = []
     tols = 10e-6  # tolerance for early iteration termination
-    # default lr frac for synthetic data is 10000.0
-    # default lr frac is same for zeta and eta
 
     for t in range(net.max_iter):
-        optimizer = torch.optim.SGD({net.zeta[t]}, lr=lr_init / lr_frac_zeta)
-        optimizer.add_param_group({"params": net.eta[t], "lr": lr_init / lr_frac_eta})
+        optimizer = torch.optim.SGD({net.zeta[t]}, lr=lr_zeta)
+        optimizer.add_param_group({"params": net.eta[t], "lr": lr_eta})
         optimizers.append(optimizer)
 
     start = time.time()
@@ -31,9 +27,7 @@ def train(
             nepoch_pre = int(nepoch1)
 
         if stage > 0:
-            optimizers[stage].param_groups[0]["lr"] = (
-                net.zeta[stage - 1].data * lr_init / lr_frac_zeta
-            )
+            optimizers[stage].param_groups[0]["lr"] = net.zeta[stage - 1].data * lr_zeta
 
         # if stage>5:
         #     nepoch_full = 501
@@ -52,9 +46,9 @@ def train(
                 optimizers[i].zero_grad()
 
             net.enable_single_layer(stage)
-            if stage > 0:
-                net.initalize_zeta(stage)
-                net.initalize_eta(stage)
+            # if stage > 0:
+            #     net.initalize_zeta(stage)
+            #     net.initalize_eta(stage)
 
             loss = net(X_orig, Y, omega, stage + 1)
             total_loss += loss.item()
@@ -142,7 +136,7 @@ def train(
     return net
 
 
-def save(net, fname_ext="", dirname="output/face_modeling/lrmc/july24"):
+def save_lrmc(net, fname_ext="", dirname="output/face_modeling/lrmc/sept24"):
     # if fname_ext != "":
     #     dirname = f"{dirname}/{fname_ext}"
     if not os.path.exists(dirname):
