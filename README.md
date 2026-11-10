@@ -23,11 +23,12 @@ Robust matrix completion (RMC) is a widely used machine learning tool that simul
 ## Citation
 If you use this code, please cite:
 ```bibtex
-@article{cai2024deeply,
-     title={Deeply Learned Robust Matrix Completion for Large-scale Low-rank Data Recovery},
-     author={Cai, HanQin and Kundu, Chandra and Liu, Jialin and Yin, Wotao},
-     journal={arXiv preprint arXiv:2501.00677},
-     year={2024}
+@article{cai2026deeply,
+  title={Deeply learned robust matrix completion for large-scale low-rank data recovery},
+  author={Cai, HanQin and Kundu, Chandra and Liu, Jialin and Yin, Wotao},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2026},
+  publisher={IEEE}
 }
 ```
 
